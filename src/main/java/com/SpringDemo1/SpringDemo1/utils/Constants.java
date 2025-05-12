@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 
 @Component
 public class Constants {
-	public final String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@(.+)$";
+	public static final String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@(.+)$";
 
 	private final Logger logger = LoggerFactory.getLogger(Constants.class);
 
@@ -15,7 +15,7 @@ public class Constants {
 	}
 
 	public void display(String message) {
-		System.out.println(message);
+		logger.error(message);
 	}
 
 }

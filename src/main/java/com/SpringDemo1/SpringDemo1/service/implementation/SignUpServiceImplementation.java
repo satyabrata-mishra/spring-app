@@ -6,7 +6,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
@@ -31,15 +30,15 @@ public class SignUpServiceImplementation implements SignUpService {
 	public ResponseEntity<?> createUser(Account a) {
 		try {
 			if (a.getEmail() == null || a.getEmail().isBlank()) {
-				return new ResponseEntity<>("Email cannot be blank.", HttpStatus.INTERNAL_SERVER_ERROR);
+				return new ResponseEntity<>("Email cannot be blank.", HttpStatus.BAD_REQUEST);
 			}
 
 			if (!a.getEmail().matches(constants.EMAIL_REGEX)) {
-				return new ResponseEntity<>("Email format is not valid.", HttpStatus.INTERNAL_SERVER_ERROR);
+				return new ResponseEntity<>("Email format is not valid.", HttpStatus.BAD_REQUEST);
 			}
 			List<String> allEmails = signUpJPARepository.findAllEmails();
 			if (allEmails.contains(a.getEmail())) {
-				return new ResponseEntity<>("Email already exsits.", HttpStatus.INTERNAL_SERVER_ERROR);
+				return new ResponseEntity<>("Email already exists during registration.", HttpStatus.CONFLICT);
 			}
 			Account response = signUpJPARepository.save(a);
 			return new ResponseEntity<>(response, HttpStatus.CREATED);
@@ -57,8 +56,7 @@ public class SignUpServiceImplementation implements SignUpService {
 			return new ResponseEntity<>(usersPage, HttpStatus.ACCEPTED);
 		} catch (Exception e) {
 			constants.display(e.getMessage(), e);
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body("An error occurred while fetching all users.");
+			return new ResponseEntity<>("Internal server error.", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -66,7 +64,7 @@ public class SignUpServiceImplementation implements SignUpService {
 	public ResponseEntity<?> deleteUser(Account account) {
 		try {
 			if (account.getEmail().isEmpty() || account.getEmail().isBlank()) {
-				return ResponseEntity.badRequest().body("Email cannot be empty or blank");
+				return new ResponseEntity<>("Email cannot be blank.", HttpStatus.BAD_REQUEST);
 			}
 			Account deleteUser = signUpJPARepository.findByEmail(account.getEmail());
 			if (deleteUser == null) {
@@ -88,14 +86,14 @@ public class SignUpServiceImplementation implements SignUpService {
 		try {
 			Account acc = signUpJPARepository.findByEmail(account.getEmail());
 			if (acc == null) {
-				return new ResponseEntity<>("User doesn't exsits.", HttpStatus.INTERNAL_SERVER_ERROR);
+				return new ResponseEntity<>("User doesn't exsits.", HttpStatus.NOT_FOUND);
 			}
 			if (acc.getLoginFailedAttempts() >= 5) {
 				return new ResponseEntity<>("User account is locked due to too many failed login attempts.",
-						HttpStatusCode.valueOf(423));
+						HttpStatus.LOCKED);
 			}
 			if (account.getPassword().isBlank() || account.getPassword().isEmpty()) {
-				return new ResponseEntity<>("Password field cannot be blank.", HttpStatus.INTERNAL_SERVER_ERROR);
+				return new ResponseEntity<>("Password field cannot be blank.", HttpStatus.BAD_REQUEST);
 			}
 			if (!acc.getIsPasswordChanged()) {
 				String password = account.getPassword();
@@ -109,12 +107,12 @@ public class SignUpServiceImplementation implements SignUpService {
 			}
 			if (!acc.getIsUserAccountActive()) {
 				return new ResponseEntity<>("User account is either deactivated or has been deleted.",
-						HttpStatusCode.valueOf(403));
+						HttpStatus.FORBIDDEN);
 			}
 			if (!verifyPassword(account.getPassword(), acc.getPassword())) {
 				acc.setLoginFailedAttempts(acc.getLoginFailedAttempts() + 1);
 				signUpJPARepository.save(acc);
-				return new ResponseEntity<>("Login denied, wrong password", HttpStatusCode.valueOf(401));
+				return new ResponseEntity<>("Login denied, wrong password", HttpStatus.FORBIDDEN);
 			}
 			acc.setLastLogin(LocalDateTime.now());
 			acc.setLoginFailedAttempts(0);
