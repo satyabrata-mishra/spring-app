@@ -1,9 +1,8 @@
-package com.SpringDemo1.SpringDemo1.service.implementation;
+package com.journalapp.implementation;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,29 +10,33 @@ import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import com.SpringDemo1.SpringDemo1.model.Account;
-import com.SpringDemo1.SpringDemo1.repository.SignUpJPARepository;
-import com.SpringDemo1.SpringDemo1.service.SignUpService;
-import com.SpringDemo1.SpringDemo1.utils.*;
+import com.journalapp.model.Account;
+import com.journalapp.repository.SignUpJPARepository;
+import com.journalapp.service.SignUpService;
+import com.journalapp.utils.*;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 
 @Service
 public class SignUpServiceImplementation implements SignUpService {
 
-	@Autowired
 	private SignUpJPARepository signUpJPARepository;
 
-	private Constants constants = new Constants();
+	private Logger1 logger;
+
+	public SignUpServiceImplementation(SignUpJPARepository signUpJPARepository, Logger1 logger) {
+		this.signUpJPARepository = signUpJPARepository;
+		this.logger = logger;
+	}
 
 	@Override
-	public ResponseEntity<?> createUser(Account a) {
+	public ResponseEntity<Object> createUser(Account a) {
 		try {
 			if (a.getEmail() == null || a.getEmail().isBlank()) {
 				return new ResponseEntity<>("Email cannot be blank.", HttpStatus.BAD_REQUEST);
 			}
 
-			if (!a.getEmail().matches(constants.EMAIL_REGEX)) {
+			if (!a.getEmail().matches(Constants.EMAIL_REGEX)) {
 				return new ResponseEntity<>("Email format is not valid.", HttpStatus.BAD_REQUEST);
 			}
 			List<String> allEmails = signUpJPARepository.findAllEmails();
@@ -43,25 +46,25 @@ public class SignUpServiceImplementation implements SignUpService {
 			Account response = signUpJPARepository.save(a);
 			return new ResponseEntity<>(response, HttpStatus.CREATED);
 		} catch (Exception e) {
-			constants.display(e.getMessage(), e);
+			logger.error(e.getMessage(), e);
 			return new ResponseEntity<>("Internal server error.", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
 	@Override
-	public ResponseEntity<?> getAllUser(int page, int size) {
+	public ResponseEntity<Object> getAllUser(int page, int size) {
 		try {
 			Pageable pageable = PageRequest.of(page, size);
 			Page<Account> usersPage = signUpJPARepository.findAll(pageable);
 			return new ResponseEntity<>(usersPage, HttpStatus.ACCEPTED);
 		} catch (Exception e) {
-			constants.display(e.getMessage(), e);
+			logger.error(e.getMessage(), e);
 			return new ResponseEntity<>("Internal server error.", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
 	@Override
-	public ResponseEntity<?> deleteUser(Account account) {
+	public ResponseEntity<Object> deleteUser(Account account) {
 		try {
 			if (account.getEmail().isEmpty() || account.getEmail().isBlank()) {
 				return new ResponseEntity<>("Email cannot be blank.", HttpStatus.BAD_REQUEST);
@@ -75,14 +78,14 @@ public class SignUpServiceImplementation implements SignUpService {
 			signUpJPARepository.save(deleteUser);
 			return new ResponseEntity<>(deleteUser.getEmail() + " deleted successfully.", HttpStatus.ACCEPTED);
 		} catch (Exception e) {
-			constants.display(e.getMessage(), e);
+			logger.error(e.getMessage(), e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body("An error occurred while deleting user: ");
 		}
 	}
 
 	@Override
-	public ResponseEntity<?> loginUser(Account account) {
+	public ResponseEntity<Object> loginUser(Account account) {
 		try {
 			Account acc = signUpJPARepository.findByEmail(account.getEmail());
 			if (acc == null) {
@@ -119,15 +122,14 @@ public class SignUpServiceImplementation implements SignUpService {
 			signUpJPARepository.save(acc);
 			return new ResponseEntity<>(acc, HttpStatus.OK);
 		} catch (Exception e) {
-			constants.display(e.getMessage(), e);
+			logger.error(e.getMessage(), e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body("An error occurred while deleting user: ");
 		}
 	}
 
 	public String hashPassword(String plainPassword) {
-		String result = BCrypt.withDefaults().hashToString(12, plainPassword.toCharArray());
-		return result;
+		return BCrypt.withDefaults().hashToString(12, plainPassword.toCharArray());
 	}
 
 	public boolean verifyPassword(String plainPassword, String hashedPassword) {

@@ -1,10 +1,10 @@
-package com.SpringDemo1.SpringDemo1.utils;
+package com.journalapp.utils;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import com.SpringDemo1.SpringDemo1.interceptor.SignUpInterceptor;
+import com.journalapp.interceptor.SignUpInterceptor;
 
 @Configuration
 public class InterceptorConfiguration implements WebMvcConfigurer {

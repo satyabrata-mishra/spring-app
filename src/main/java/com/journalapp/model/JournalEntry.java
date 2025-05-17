@@ -1,8 +1,8 @@
-package com.SpringDemo1.SpringDemo1.model;
+package com.journalapp.model;
 
 import java.time.LocalDateTime;
 
-import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UuidGenerator;
 
 import jakarta.persistence.Id;
 import jakarta.persistence.Column;
@@ -22,8 +22,8 @@ public class JournalEntry {
 
 	@Id
 	@Column(name = "id")
-	@GeneratedValue(generator = "uuid")
-	@GenericGenerator(name = "uuid", strategy = "uuid2")
+	@GeneratedValue
+	@UuidGenerator
 	private String id;
 
 	@Column(name = "email")

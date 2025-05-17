@@ -1,6 +1,5 @@
-package com.SpringDemo1.SpringDemo1.controller;
+package com.journalapp.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,38 +10,41 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.SpringDemo1.SpringDemo1.model.JournalEntry;
-import com.SpringDemo1.SpringDemo1.service.implementation.JournalEntryServiceImplementation;
+import com.journalapp.implementation.JournalEntryServiceImplementation;
+import com.journalapp.model.JournalEntry;
 
 @RestController
 @RequestMapping("/journal")
 public class JournalEntryController {
 
-	@Autowired
 	JournalEntryServiceImplementation journalEntryService;
 
+	public JournalEntryController(JournalEntryServiceImplementation journalEntryService) {
+		this.journalEntryService = journalEntryService;
+	}
+
 	@PostMapping("/createJournal")
-	public ResponseEntity<?> createEntry(@RequestBody JournalEntry journalEntry) {
+	public ResponseEntity<Object> createEntry(@RequestBody JournalEntry journalEntry) {
 		return journalEntryService.createEntry(journalEntry);
 	}
 
 	@GetMapping("/getAllJournal")
-	public ResponseEntity<?> getAllJournals() {
+	public ResponseEntity<Object> getAllJournals() {
 		return journalEntryService.getAllJournals();
 	}
 
 	@GetMapping("getJournalByid/{id}")
-	public ResponseEntity<?> getJournalById(@PathVariable String id) {
+	public ResponseEntity<Object> getJournalById(@PathVariable String id) {
 		return journalEntryService.getJournalById(id);
 	}
 
 	@DeleteMapping("/deleteJournalByid/{id}")
-	public ResponseEntity<?> deleteJournalById(@PathVariable String id) {
+	public ResponseEntity<Object> deleteJournalById(@PathVariable String id) {
 		return journalEntryService.deleteJournalById(id);
 	}
 
 	@PutMapping("/updateJournalByid")
-	public ResponseEntity<?> updateJournalById(@RequestBody JournalEntry journalEntry) {
+	public ResponseEntity<Object> updateJournalById(@RequestBody JournalEntry journalEntry) {
 		return journalEntryService.updateJournalEntryById(journalEntry);
 	}
 }

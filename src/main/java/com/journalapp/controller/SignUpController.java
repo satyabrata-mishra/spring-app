@@ -1,6 +1,5 @@
-package com.SpringDemo1.SpringDemo1.controller;
+package com.journalapp.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,34 +10,37 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.SpringDemo1.SpringDemo1.model.Account;
-import com.SpringDemo1.SpringDemo1.service.SignUpService;
+import com.journalapp.model.Account;
+import com.journalapp.service.SignUpService;
 
 @RestController
 @RequestMapping("/signup")
 public class SignUpController {
 
-	@Autowired
 	private SignUpService signUpService;
 
+	public SignUpController(SignUpService signUpService) {
+		this.signUpService = signUpService;
+	}
+
 	@PostMapping("/createuser")
-	public ResponseEntity<?> addUser(@RequestBody Account account) {
+	public ResponseEntity<Object> addUser(@RequestBody Account account) {
 		return signUpService.createUser(account);
 	}
 
 	@GetMapping("/getallusers")
-	public ResponseEntity<?> getAllUsers(@RequestParam(name = "page", defaultValue = "0") int page,
+	public ResponseEntity<Object> getAllUsers(@RequestParam(name = "page", defaultValue = "0") int page,
 			@RequestParam(name = "size", defaultValue = "10") int size) {
 		return signUpService.getAllUser(page, size);
 	}
 
 	@DeleteMapping("/deleteuser")
-	public ResponseEntity<?> deleteUsers(@RequestBody Account account) {
+	public ResponseEntity<Object> deleteUsers(@RequestBody Account account) {
 		return signUpService.deleteUser(account);
 	}
 
 	@PutMapping("/login")
-	public ResponseEntity<?> loginUser(@RequestBody Account account) {
+	public ResponseEntity<Object> loginUser(@RequestBody Account account) {
 		return signUpService.loginUser(account);
 	}
 }

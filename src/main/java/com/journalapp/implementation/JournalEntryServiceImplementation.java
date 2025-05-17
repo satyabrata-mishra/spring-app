@@ -1,29 +1,32 @@
-package com.SpringDemo1.SpringDemo1.service.implementation;
+package com.journalapp.implementation;
 
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.SpringDemo1.SpringDemo1.model.Account;
-import com.SpringDemo1.SpringDemo1.model.JournalEntry;
-import com.SpringDemo1.SpringDemo1.repository.JournalEntryJPARepository;
-import com.SpringDemo1.SpringDemo1.utils.Constants;
+import com.journalapp.model.Account;
+import com.journalapp.model.JournalEntry;
+import com.journalapp.repository.JournalEntryJPARepository;
+import com.journalapp.utils.Constants;
+import com.journalapp.utils.Logger1;
 
 @Service
 public class JournalEntryServiceImplementation {
 
-	@Autowired
 	JournalEntryJPARepository journalEntryRepository;
 
-	@Autowired
-	Constants utils;
+	Logger1 logger;
 
-	public ResponseEntity<?> createEntry(JournalEntry journalEntry) {
+	public JournalEntryServiceImplementation(JournalEntryJPARepository journalEntryRepository, Logger1 logger) {
+		this.journalEntryRepository = journalEntryRepository;
+		this.logger = logger;
+	}
+
+	public ResponseEntity<Object> createEntry(JournalEntry journalEntry) {
 		try {
 			List<String> emails = journalEntryRepository.findAllEmails();
 			if (!emails.contains(journalEntry.getEmail())) {
@@ -33,27 +36,27 @@ public class JournalEntryServiceImplementation {
 			Account account = journalEntryRepository.findByEmail(journalEntry.getEmail());
 			ResponseEntity<?> authorization = authorization(account);
 			if (authorization.getStatusCode() != HttpStatusCode.valueOf(200)) {
-				return authorization;
+				return new ResponseEntity<>(authorization, HttpStatus.UNAUTHORIZED);
 			}
 			JournalEntry result = journalEntryRepository.save(journalEntry);
 			return new ResponseEntity<>(result, HttpStatus.CREATED);
 		} catch (Exception e) {
-			utils.display(e.getLocalizedMessage(), e);
-			return new ResponseEntity<>("Some unexpected error occurred.", HttpStatus.INTERNAL_SERVER_ERROR);
+			logger.error(e.getLocalizedMessage(), e);
+			return new ResponseEntity<>(Constants.UNEXPECTED_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
-	public ResponseEntity<?> getAllJournals() {
+	public ResponseEntity<Object> getAllJournals() {
 		try {
 			List<JournalEntry> result = journalEntryRepository.findAll();
 			return new ResponseEntity<>(result, HttpStatus.ACCEPTED);
 		} catch (Exception e) {
-			utils.display(e.getLocalizedMessage(), e);
-			return new ResponseEntity<>("Some unexpected error occurred.", HttpStatus.INTERNAL_SERVER_ERROR);
+			logger.error(e.getLocalizedMessage(), e);
+			return new ResponseEntity<>(Constants.UNEXPECTED_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
-	public ResponseEntity<?> getJournalById(String id) {
+	public ResponseEntity<Object> getJournalById(String id) {
 		try {
 			Optional<JournalEntry> result = journalEntryRepository.findById(id);
 			if (result.isPresent()) {
@@ -61,12 +64,12 @@ public class JournalEntryServiceImplementation {
 			}
 			return new ResponseEntity<>("Record with id: " + id + " is not present.", HttpStatus.NOT_FOUND);
 		} catch (Exception e) {
-			utils.display(e.getLocalizedMessage(), e);
-			return new ResponseEntity<>("Some unexpected error occurred.", HttpStatus.INTERNAL_SERVER_ERROR);
+			logger.error(e.getLocalizedMessage(), e);
+			return new ResponseEntity<>(Constants.UNEXPECTED_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
-	public ResponseEntity<?> deleteJournalById(String id) {
+	public ResponseEntity<Object> deleteJournalById(String id) {
 		try {
 			Optional<JournalEntry> journalEntry = journalEntryRepository.findById(id);
 			if (journalEntry.isPresent()) {
@@ -75,12 +78,12 @@ public class JournalEntryServiceImplementation {
 			}
 			return new ResponseEntity<>("Record with id: " + id + " is not present.", HttpStatus.NOT_FOUND);
 		} catch (Exception e) {
-			utils.display(e.getLocalizedMessage(), e);
-			return new ResponseEntity<>("Some unexpected error occurred.", HttpStatus.INTERNAL_SERVER_ERROR);
+			logger.error(e.getLocalizedMessage(), e);
+			return new ResponseEntity<>(Constants.UNEXPECTED_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
-	public ResponseEntity<?> updateJournalEntryById(JournalEntry journalEntry) {
+	public ResponseEntity<Object> updateJournalEntryById(JournalEntry journalEntry) {
 		try {
 			Optional<JournalEntry> result = journalEntryRepository.findById(journalEntry.getId());
 			if (result.isPresent()) {
@@ -97,12 +100,12 @@ public class JournalEntryServiceImplementation {
 			return new ResponseEntity<>("Record with id: " + journalEntry.getId() + " is not present.",
 					HttpStatus.NOT_FOUND);
 		} catch (Exception e) {
-			utils.display(e.getLocalizedMessage(), e);
-			return new ResponseEntity<>("Some unexpected error occurred.", HttpStatus.INTERNAL_SERVER_ERROR);
+			logger.error(e.getLocalizedMessage(), e);
+			return new ResponseEntity<>(Constants.UNEXPECTED_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
-	public ResponseEntity<?> authorization(Account account) {
+	public ResponseEntity<Object> authorization(Account account) {
 		if (!account.getIsPasswordChanged()) {
 			return new ResponseEntity<>("User doesn't have permission to perform this action.",
 					HttpStatus.UNAUTHORIZED);

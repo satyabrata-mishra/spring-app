@@ -1,4 +1,4 @@
-package com.SpringDemo1.SpringDemo1.controller;
+package com.journalapp.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

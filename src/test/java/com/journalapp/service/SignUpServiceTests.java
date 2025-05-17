@@ -1,20 +1,21 @@
-package com.SpringDemo1.SpringDemo1.service;
+package com.journalapp.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.SpringDemo1.SpringDemo1.model.Account;
-import com.SpringDemo1.SpringDemo1.repository.SignUpJPARepository;
-import com.SpringDemo1.SpringDemo1.service.implementation.SignUpServiceImplementation;
+import com.journalapp.implementation.SignUpServiceImplementation;
+import com.journalapp.model.Account;
+import com.journalapp.repository.SignUpJPARepository;
 
 @SpringBootTest
 @Transactional
-public class SignUpServiceTests {
+class SignUpServiceTests {
 
 	@Autowired
 	private SignUpServiceImplementation signUpService;
@@ -23,33 +24,33 @@ public class SignUpServiceTests {
 	private SignUpJPARepository repo;
 
 	@Test
-	public void testCreateUser_success() {
+	void testCreateUser_success() {
 		Account acc = new Account();
 		acc.setEmail("test@example.com");
 		acc.setName("Test User");
 		acc.setPassword("password123");
-		ResponseEntity<?> response = signUpService.createUser(acc);
-		assertEquals(201, response.getStatusCodeValue());
+		ResponseEntity<Object> response = signUpService.createUser(acc);
+		assertEquals(HttpStatus.CREATED, response.getStatusCode());
 	}
 
 	@Test
-	public void testCreateUser_blankEmail() {
+	void testCreateUser_blankEmail() {
 		Account acc = new Account();
 		acc.setEmail(" ");
-		ResponseEntity<?> response = signUpService.createUser(acc);
-		assertEquals(400, response.getStatusCodeValue());
+		ResponseEntity<Object> response = signUpService.createUser(acc);
+		assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 	}
 
 	@Test
-	public void testCreateUser_invalidEmail() {
+	void testCreateUser_invalidEmail() {
 		Account acc = new Account();
 		acc.setEmail("invalid-email");
-		ResponseEntity<?> response = signUpService.createUser(acc);
-		assertEquals(400, response.getStatusCodeValue());
+		ResponseEntity<Object> response = signUpService.createUser(acc);
+		assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 	}
 
 	@Test
-	public void testCreateUser_duplicateEmail() {
+	void testCreateUser_duplicateEmail() {
 		Account acc = new Account();
 		acc.setEmail("duplicate@example.com");
 		acc.setName("Original");
@@ -60,18 +61,18 @@ public class SignUpServiceTests {
 		duplicate.setEmail("duplicate@example.com");
 		duplicate.setName("Copy");
 		duplicate.setPassword("pass2");
-		ResponseEntity<?> response = signUpService.createUser(duplicate);
-		assertEquals(409, response.getStatusCodeValue());
+		ResponseEntity<Object> response = signUpService.createUser(duplicate);
+		assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
 	}
 
 	@Test
-	public void testGetAllUsers() {
-		ResponseEntity<?> response = signUpService.getAllUser(0, 10);
-		assertEquals(202, response.getStatusCodeValue());
+	void testGetAllUsers() {
+		ResponseEntity<Object> response = signUpService.getAllUser(0, 10);
+		assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
 	}
 
 	@Test
-	public void testDeleteUser_success() {
+	void testDeleteUser_success() {
 		Account acc = new Account();
 		acc.setEmail("delete@test.com");
 		acc.setName("Delete Me");
@@ -79,28 +80,28 @@ public class SignUpServiceTests {
 		acc.setIsUserAccountActive(true);
 		repo.save(acc);
 
-		ResponseEntity<?> response = signUpService.deleteUser(acc);
-		assertEquals(202, response.getStatusCodeValue());
+		ResponseEntity<Object> response = signUpService.deleteUser(acc);
+		assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
 	}
 
 	@Test
-	public void testDeleteUser_nonExistent() {
+	void testDeleteUser_nonExistent() {
 		Account acc = new Account();
 		acc.setEmail("notfound@example.com");
-		ResponseEntity<?> response = signUpService.deleteUser(acc);
-		assertEquals(404, response.getStatusCodeValue());
+		ResponseEntity<Object> response = signUpService.deleteUser(acc);
+		assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
 	}
 
 	@Test
-	public void testDeleteUser_blankEmail() {
+	void testDeleteUser_blankEmail() {
 		Account acc = new Account();
 		acc.setEmail(" ");
-		ResponseEntity<?> response = signUpService.deleteUser(acc);
-		assertEquals(400, response.getStatusCodeValue());
+		ResponseEntity<Object> response = signUpService.deleteUser(acc);
+		assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 	}
 
 	@Test
-	public void testLoginUser_firstTimePasswordChange() {
+	void testLoginUser_firstTimePasswordChange() {
 		Account acc = new Account();
 		acc.setEmail("firstlogin@example.com");
 		acc.setPassword("temp123");
@@ -112,12 +113,12 @@ public class SignUpServiceTests {
 		Account login = new Account();
 		login.setEmail("firstlogin@example.com");
 		login.setPassword("temp123");
-		ResponseEntity<?> response = signUpService.loginUser(login);
-		assertEquals(200, response.getStatusCodeValue());
+		ResponseEntity<Object> response = signUpService.loginUser(login);
+		assertEquals(HttpStatus.OK, response.getStatusCode());
 	}
 
 	@Test
-	public void testLoginUser_accountLocked() {
+	void testLoginUser_accountLocked() {
 		Account acc = new Account();
 		acc.setEmail("locked@example.com");
 		acc.setPassword("pass");
@@ -126,12 +127,12 @@ public class SignUpServiceTests {
 		acc.setIsUserAccountActive(true);
 		repo.save(acc);
 
-		ResponseEntity<?> response = signUpService.loginUser(acc);
-		assertEquals(423, response.getStatusCodeValue());
+		ResponseEntity<Object> response = signUpService.loginUser(acc);
+		assertEquals(HttpStatus.LOCKED, response.getStatusCode());
 	}
 
 	@Test
-	public void testLoginUser_wrongPassword() {
+	void testLoginUser_wrongPassword() {
 		Account acc = new Account();
 		acc.setEmail("wrongpass@example.com");
 		acc.setPassword(signUpService.hashPassword("correctpass"));
@@ -144,12 +145,12 @@ public class SignUpServiceTests {
 		login.setEmail("wrongpass@example.com");
 		login.setPassword("wrongpass");
 
-		ResponseEntity<?> response = signUpService.loginUser(login);
-		assertEquals(403, response.getStatusCodeValue());
+		ResponseEntity<Object> response = signUpService.loginUser(login);
+		assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
 	}
 
 	@Test
-	public void testLoginUser_inactiveAccount() {
+	void testLoginUser_inactiveAccount() {
 		Account acc = new Account();
 		acc.setEmail("inactive@example.com");
 		acc.setPassword(signUpService.hashPassword("mypassword"));
@@ -162,12 +163,12 @@ public class SignUpServiceTests {
 		login.setEmail("inactive@example.com");
 		login.setPassword("mypassword");
 
-		ResponseEntity<?> response = signUpService.loginUser(login);
-		assertEquals(403, response.getStatusCodeValue());
+		ResponseEntity<Object> response = signUpService.loginUser(login);
+		assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
 	}
 
 	@Test
-	public void testLoginUser_success() {
+	void testLoginUser_success() {
 		Account acc = new Account();
 		acc.setEmail("login@example.com");
 		acc.setPassword(signUpService.hashPassword("secret123"));
@@ -180,22 +181,22 @@ public class SignUpServiceTests {
 		login.setEmail("login@example.com");
 		login.setPassword("secret123");
 
-		ResponseEntity<?> response = signUpService.loginUser(login);
-		assertEquals(200, response.getStatusCodeValue());
+		ResponseEntity<Object> response = signUpService.loginUser(login);
+		assertEquals(HttpStatus.OK, response.getStatusCode());
 	}
 
 	@Test
-	public void testLoginUser_notFound() {
+	void testLoginUser_notFound() {
 		Account acc = new Account();
 		acc.setEmail("nouser@example.com");
 		acc.setPassword("pass");
 
-		ResponseEntity<?> response = signUpService.loginUser(acc);
-		assertEquals(404, response.getStatusCodeValue());
+		ResponseEntity<Object> response = signUpService.loginUser(acc);
+		assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
 	}
 
 	@Test
-	public void testLoginUser_blankPassword() {
+	void testLoginUser_blankPassword() {
 		Account acc = new Account();
 		acc.setEmail("blankpass@example.com");
 		acc.setPassword(signUpService.hashPassword("realpass"));
@@ -208,7 +209,7 @@ public class SignUpServiceTests {
 		login.setEmail("blankpass@example.com");
 		login.setPassword(" ");
 
-		ResponseEntity<?> response = signUpService.loginUser(login);
-		assertEquals(400, response.getStatusCodeValue());
+		ResponseEntity<Object> response = signUpService.loginUser(login);
+		assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 	}
 }

@@ -1,4 +1,4 @@
-package com.SpringDemo1.SpringDemo1.model;
+package com.journalapp.model;
 
 import java.time.LocalDateTime;
 
