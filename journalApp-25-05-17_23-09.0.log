@@ -1,5 +1,0 @@
-25-05-17 23:09:56.905 [main] INFO  com.journalapp.JournalApplication - Starting JournalApplication using Java 17.0.11 with PID 19776 (C:\Users\mishr\PROJECTS\Angular SpringBoot\SpringDemo1\target\classes started by mishr in C:\Users\mishr\PROJECTS\Angular SpringBoot\SpringDemo1) 
-25-05-17 23:09:56.921 [main] INFO  com.journalapp.JournalApplication - The following 1 profile is active: "dev" 
-25-05-17 23:09:58.601 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode. 
-25-05-17 23:09:58.750 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 125 ms. Found 2 JPA repository interfaces. 
-25-05-17 23:09:59.997 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http) 

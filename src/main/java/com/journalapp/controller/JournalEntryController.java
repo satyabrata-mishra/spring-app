@@ -10,16 +10,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.journalapp.implementation.JournalEntryServiceImplementation;
+import com.journalapp.implementation.JournalEntryImplementation;
 import com.journalapp.model.JournalEntry;
 
 @RestController
 @RequestMapping("/journal")
 public class JournalEntryController {
 
-	JournalEntryServiceImplementation journalEntryService;
+	JournalEntryImplementation journalEntryService;
 
-	public JournalEntryController(JournalEntryServiceImplementation journalEntryService) {
+	public JournalEntryController(JournalEntryImplementation journalEntryService) {
 		this.journalEntryService = journalEntryService;
 	}
 
@@ -47,4 +47,5 @@ public class JournalEntryController {
 	public ResponseEntity<Object> updateJournalById(@RequestBody JournalEntry journalEntry) {
 		return journalEntryService.updateJournalEntryById(journalEntry);
 	}
+
 }

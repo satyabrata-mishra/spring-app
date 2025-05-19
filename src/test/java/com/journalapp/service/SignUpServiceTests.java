@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.journalapp.implementation.SignUpServiceImplementation;
+import com.journalapp.implementation.SignUpImplementation;
 import com.journalapp.model.Account;
 import com.journalapp.repository.SignUpJPARepository;
 
@@ -18,7 +18,7 @@ import com.journalapp.repository.SignUpJPARepository;
 class SignUpServiceTests {
 
 	@Autowired
-	private SignUpServiceImplementation signUpService;
+	private SignUpImplementation signUpService;
 
 	@Autowired
 	private SignUpJPARepository repo;

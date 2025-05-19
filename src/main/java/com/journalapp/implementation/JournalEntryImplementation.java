@@ -11,17 +11,18 @@ import org.springframework.stereotype.Service;
 import com.journalapp.model.Account;
 import com.journalapp.model.JournalEntry;
 import com.journalapp.repository.JournalEntryJPARepository;
+import com.journalapp.service.JournalEntryService;
 import com.journalapp.utils.Constants;
 import com.journalapp.utils.Logger1;
 
 @Service
-public class JournalEntryServiceImplementation {
+public class JournalEntryImplementation implements JournalEntryService {
 
 	JournalEntryJPARepository journalEntryRepository;
 
 	Logger1 logger;
 
-	public JournalEntryServiceImplementation(JournalEntryJPARepository journalEntryRepository, Logger1 logger) {
+	public JournalEntryImplementation(JournalEntryJPARepository journalEntryRepository, Logger1 logger) {
 		this.journalEntryRepository = journalEntryRepository;
 		this.logger = logger;
 	}

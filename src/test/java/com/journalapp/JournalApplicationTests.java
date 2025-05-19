@@ -5,14 +5,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.journalapp.controller.HealthCheck;
+import com.journalapp.controller.TestAPI;
 
 @SpringBootTest
-class SpringDemo1ApplicationTests {
+class JournalApplicationTests {
 	@Test
 	void testHealthCheck_success() {
-		HealthCheck healthCheck = new HealthCheck();
-		String response = healthCheck.healthCheck();
+		TestAPI test = new TestAPI();
+		String response = test.test();
 		assertEquals("Hi from Journal Application backend. I am live.", response);
 	}
 }

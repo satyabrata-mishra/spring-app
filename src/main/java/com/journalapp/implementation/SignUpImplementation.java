@@ -18,13 +18,13 @@ import com.journalapp.utils.*;
 import at.favre.lib.crypto.bcrypt.BCrypt;
 
 @Service
-public class SignUpServiceImplementation implements SignUpService {
+public class SignUpImplementation implements SignUpService {
 
 	private SignUpJPARepository signUpJPARepository;
 
 	private Logger1 logger;
 
-	public SignUpServiceImplementation(SignUpJPARepository signUpJPARepository, Logger1 logger) {
+	public SignUpImplementation(SignUpJPARepository signUpJPARepository, Logger1 logger) {
 		this.signUpJPARepository = signUpJPARepository;
 		this.logger = logger;
 	}
