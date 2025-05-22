@@ -3,6 +3,7 @@ package com.journalapp.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.journalapp.model.Account;
+import com.journalapp.model.OtpVerification;
 import com.journalapp.service.SignUpService;
 
 @RestController
@@ -42,5 +44,15 @@ public class SignUpController {
 	@PutMapping("/login")
 	public ResponseEntity<Object> loginUser(@RequestBody Account account) {
 		return signUpService.loginUser(account);
+	}
+
+	@PostMapping("/verifuser")
+	public ResponseEntity<Object> verifyUser(@RequestBody OtpVerification otp) {
+		return signUpService.verifyUser(otp);
+	}
+
+	@GetMapping("/resendotp/{email}")
+	public ResponseEntity<Object> resendOtp(@PathVariable String email) {
+		return signUpService.resendotp(email);
 	}
 }

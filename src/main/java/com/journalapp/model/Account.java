@@ -34,6 +34,9 @@ public class Account {
 	@Column(name = "isuseraccountactive")
 	private boolean isUserAccountActive = false;
 
+	@Column(name = "isuserverified")
+	private boolean isUserVerified = false;
+
 	@Column(name = "createdat", updatable = false)
 	@CreationTimestamp
 	private LocalDateTime createdAt;
@@ -118,6 +121,14 @@ public class Account {
 
 	public void setLoginFailedAttempts(int loginFailedAttempts) {
 		this.loginFailedAttempts = loginFailedAttempts;
+	}
+
+	public boolean getUserVerified() {
+		return isUserVerified;
+	}
+
+	public void setUserVerified(boolean isUserVerified) {
+		this.isUserVerified = isUserVerified;
 	}
 
 }

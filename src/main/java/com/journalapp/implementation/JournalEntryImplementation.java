@@ -107,6 +107,10 @@ public class JournalEntryImplementation implements JournalEntryService {
 	}
 
 	public ResponseEntity<Object> authorization(Account account) {
+		if (!account.getUserVerified()) {
+			return new ResponseEntity<>("User is not verified.", HttpStatus.FORBIDDEN);
+		}
+
 		if (!account.getIsPasswordChanged()) {
 			return new ResponseEntity<>("User doesn't have permission to perform this action.",
 					HttpStatus.UNAUTHORIZED);
