@@ -15,7 +15,6 @@ import jakarta.annotation.PostConstruct;
 
 @Service
 public class WeatherImplementation implements WeatherService {
-
 	Logger1 logger;
 
 	@Value("${weather.api.key}")
@@ -31,7 +30,6 @@ public class WeatherImplementation implements WeatherService {
 	public ResponseEntity<Object> getWeather(String city) {
 		String api = "https://api.weatherstack.com/current?access_key=API_KEY&query=CITY";
 		api = api.replace("API_KEY", apiKey).replace("CITY", city);
-		logger.info(api);
 		ResponseEntity<Weather> response = restTemplate.exchange(api, HttpMethod.GET, null, Weather.class);
 		return new ResponseEntity<>(response.getBody(), HttpStatus.ACCEPTED);
 	}
